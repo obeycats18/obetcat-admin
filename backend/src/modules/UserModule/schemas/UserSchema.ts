@@ -23,6 +23,6 @@ let UserSchema = new Schema({
     }
 })
 
-let UserModel = mongoose.model('User', UserSchema);
 
-export default UserModel;
+
+export default UserSchema;

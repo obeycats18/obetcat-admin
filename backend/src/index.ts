@@ -1,21 +1,21 @@
 import express from 'express'
 import dotenv from 'dotenv'
+import bodyParser from 'body-parser'
 
+//Modules
 import {DBModule} from './db/DBModule'
+import UserRouter from './modules/UserModule/routes/UserRoutes'
 
 dotenv.config({path: __dirname + '/.env'});
 
 const app = express();
-let db = new DBModule(process.env.MONGODB_URL);
-if(db.getConnectedState()) {
-    app.get('/', (_request : express.Request, response : express.Response) => {
-        response.send('Hello World!');
-    })
-    
-    app.listen(process.env.EXPRESS_PORT, () => {
-        console.log('Server starting...');
-    })
-}else{
-    console.log('Database not connected')
-}
+new DBModule(process.env.MONGODB_URL);
 
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}))
+
+app.use('/user', UserRouter)
+
+app.listen(process.env.EXPRESS_PORT, () => {
+    console.log('Server starting...');
+})
