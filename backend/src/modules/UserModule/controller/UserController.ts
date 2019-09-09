@@ -6,8 +6,7 @@ let router = express.Router();
 
 export class UserController {
 
-    
-
+    // route( '/')
     index = (req:express.Request, res:express.Response) => {
         UserModel.find({}, (err, docs) => {
             if(err) {
@@ -28,6 +27,7 @@ export class UserController {
         })
     }
 
+    // route( '/delete')
     deleteUser = (req:express.Request, res:express.Response) => {
         let userId = req.body.id
         UserModel.findByIdAndRemove(userId, (err) => {
@@ -44,18 +44,10 @@ export class UserController {
         })
     }
 
+    // route( '/registration')
     addUser = (req:express.Request, res:express.Response) => {
-        
-        let saltRounds = 10;
 
-        let confirmPassword = req.body.confirmPassword;
-        
-        let newUser = {
-            fullname: req.body.fullname,
-            email: req.body.email,
-            password: req.body.password,
-            role: req.body.role
-        }
+        let newUser = req.body
         
         UserModel.findOne({email: newUser.email})
             .exec()
@@ -65,31 +57,24 @@ export class UserController {
                         message: 'User is exicted',
                         status: 409
                     })
-                }else{
-                    if(confirmPassword !== newUser.password){
-                        return res.send( {
-                            message: 'Password not equals',
-                            status: 400
-                        } )
-                    }
-
-                    new UserModel(newUser).save( ( err, user) => {
-                        if(err){
-                            res.send({
-                                message: err,
-                                status: 500
-                            })
-                        }else{
-                            res.send({
-                                message: 'User creted successfully',
-                                status: 201
-                            })
-                        }
-                    })
                 }
+
+                new UserModel(newUser).save( ( err ) => {
+                    if(err){
+                        res.send({
+                            message: err,
+                            status: 500
+                        })
+                    }else{
+                        res.send({
+                            message: 'User creted successfully',
+                            status: 201
+                        })
+                    }
+                })
             })
-            .catch( err => {res.send( {status: 500} )})
+            .catch( err => {res.send( {message: err, status: 500} )})
     }
 }
 
-//TODO:Create hasing password for UserSchema  
+//TODO:Create validation for all props in UserSchema and send error to client-side! 

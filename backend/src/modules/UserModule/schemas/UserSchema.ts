@@ -1,15 +1,16 @@
 import mongoose, {Schema}  from 'mongoose'
 import {isEmail} from 'validator'
+import { Document } from 'mongoose';
 
 import bcrypt from 'bcrypt'
 
-const saltRound = 10;
 
-export interface IUser extends mongoose.Document{
-    fullname: string;
-    email: string;
-    password: string;
-    role: string;
+
+export interface IUser extends Document{
+    fullname?: string;
+    email?: string;
+    password?: string;
+    role?: string;
 }
 
 let UserSchema = new Schema({
@@ -25,7 +26,8 @@ let UserSchema = new Schema({
     },
     password: {
         type: String,
-        required: [true, 'Password is required!']
+        required: [true, 'Password is required!'],
+        min: 8
     },
     role: {
         type: String,
@@ -33,24 +35,29 @@ let UserSchema = new Schema({
     }
 })
 
+UserSchema.pre<IUser>('save', function (next) {
+
+    let saltRounds = 10;
+    const user = this;
+    
+    if(!user.isModified('password')){
+        return next();
+    }
+
+    
+    bcrypt.genSalt(saltRounds, (err, salt) => {
+        if(err) return next(err);
+
+        bcrypt.hash(this.password, salt, (err, hash) => {
+            if(err) return next(err);
+
+            this.password = hash;
+            next();
+        })
+    })
+
+})
+
+
 export let UserModel = mongoose.model('User', UserSchema);
 
-// UserSchema.pre<IUser>('save', function(next) {
-
-//     let saltRounds = 10;
-
-//     if(!this.isModified('password')){
-//         return next();
-//     }
-//     bcrypt.genSalt(saltRounds, (err, salt) => {
-//         if(err) return next(err);
-
-//         bcrypt.hash(this.password, salt, (err, hash) => {
-//             if(err) return next(err);
-
-//             this.password = hash;
-//             next();
-//         })
-//     })
-
-// })
