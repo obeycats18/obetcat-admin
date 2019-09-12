@@ -1,8 +1,6 @@
 import { UserModel } from "../schemas/UserSchema";
 import express from 'express'
-import {IUser} from '../schemas/UserSchema'
 
-let router = express.Router();
 
 export class UserController {
 
@@ -43,38 +41,5 @@ export class UserController {
             } )
         })
     }
-
-    // route( '/registration')
-    addUser = (req:express.Request, res:express.Response) => {
-
-        let newUser = req.body
-        
-        UserModel.findOne({email: newUser.email})
-            .exec()
-            .then(user => {
-                if(user){
-                    return res.send({
-                        message: 'User is exicted',
-                        status: 409
-                    })
-                }
-
-                new UserModel(newUser).save( ( err ) => {
-                    if(err){
-                        res.send({
-                            message: err,
-                            status: 500
-                        })
-                    }else{
-                        res.send({
-                            message: 'User creted successfully',
-                            status: 201
-                        })
-                    }
-                })
-            })
-            .catch( err => {res.send( {message: err, status: 500} )})
-    }
 }
 
-//TODO:Create validation for all props in UserSchema and send error to client-side! 

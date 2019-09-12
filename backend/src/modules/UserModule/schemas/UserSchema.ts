@@ -4,13 +4,11 @@ import { Document } from 'mongoose';
 
 import bcrypt from 'bcrypt'
 
-
-
 export interface IUser extends Document{
-    fullname?: string;
-    email?: string;
-    password?: string;
-    role?: string;
+    fullname: string ;
+    email: string;
+    password: string ;
+    role: string ;
 }
 
 let UserSchema = new Schema({
@@ -32,6 +30,9 @@ let UserSchema = new Schema({
     role: {
         type: String,
         required: [true, 'Role is required!']
+    },
+    photo: {
+        type: String
     }
 })
 
@@ -48,10 +49,10 @@ UserSchema.pre<IUser>('save', function (next) {
     bcrypt.genSalt(saltRounds, (err, salt) => {
         if(err) return next(err);
 
-        bcrypt.hash(this.password, salt, (err, hash) => {
+        bcrypt.hash(user.password, salt, (err, hash) => {
             if(err) return next(err);
 
-            this.password = hash;
+            user.password = hash;
             next();
         })
     })
