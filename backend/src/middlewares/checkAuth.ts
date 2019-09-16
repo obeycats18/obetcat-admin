@@ -1,5 +1,6 @@
 import express from 'express'
 import verifyJWT from '../modules/AuthModule/jwt/verifyJWT';
+import { IUser } from '../modules/UserModule/schemas/UserSchema';
 
 export default (req:express.Request, res:express.Response, next:express.NextFunction) => {
     if(req.path === '/login' || req.path === '/registration') 
@@ -9,7 +10,8 @@ export default (req:express.Request, res:express.Response, next:express.NextFunc
 
     verifyJWT(token)
         .then( (user:any) => {
-            req.user = user;
+            let postData: IUser = user.data._doc
+            req.body.user = postData;
             next()
         })
         .catch(err => {

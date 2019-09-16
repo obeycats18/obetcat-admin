@@ -2,9 +2,7 @@ import { UserModel, IUser } from "../../UserModule/schemas/UserSchema";
 import express from 'express'
 import createToken from "../jwt/createToken";
 import bcrypt from 'bcrypt'
-import {reduce} from 'lodash'
 
-let router = express.Router();
 
 export class AuthController {
 
@@ -63,8 +61,7 @@ export class AuthController {
                 const token = createToken(user);
                 res.json({
                     status: 201,
-                    token,
-                    user
+                    token
                 })
             }else{
                 res.json({

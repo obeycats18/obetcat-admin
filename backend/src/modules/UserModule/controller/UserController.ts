@@ -26,7 +26,7 @@ export class UserController {
     }
 
     // route( '/delete')
-    deleteUser = (req:express.Request, res:express.Response) => {
+    delete = (req:express.Request, res:express.Response) => {
         let userId = req.body.id
         UserModel.findByIdAndRemove(userId, (err) => {
             if(err) {
@@ -39,6 +39,22 @@ export class UserController {
                 message: 'User deleted successfully!',
                 status: 200
             } )
+        })
+    }
+
+    getMe = (req:express.Request, res:express.Response) => {
+        let userId = req.body.user._id
+        UserModel.findById(userId, (err, docs) => {
+            if(err) {
+                res.send( {
+                    status: 500
+                } )
+            }else{
+                res.json({
+                    status: 200,
+                    docs
+                })
+            }
         })
     }
 }
