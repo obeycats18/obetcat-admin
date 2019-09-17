@@ -10,8 +10,7 @@ export default (req:express.Request, res:express.Response, next:express.NextFunc
 
     verifyJWT(token)
         .then( (user:any) => {
-            let postData: IUser = user.data._doc
-            req.body.user = postData;
+            req.body.user = user.data;
             next()
         })
         .catch(err => {
