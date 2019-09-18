@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 
+
 //Modules
 import UserRouter from './modules/UserModule/routes/UserRoutes'
 import AuthRouter from './modules/AuthModule/routes/AuthRoutes'

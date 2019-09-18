@@ -32,7 +32,8 @@ export let ProjectSchema = new Schema({
         type: Number
     },
     owner: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     // milestones: [MilestoneModel]
 })

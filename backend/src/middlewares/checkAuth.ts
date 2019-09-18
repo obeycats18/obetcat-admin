@@ -1,6 +1,6 @@
 import express from 'express'
 import verifyJWT from '../modules/AuthModule/jwt/verifyJWT';
-import { IUser } from '../modules/UserModule/schemas/UserSchema';
+
 
 export default (req:express.Request, res:express.Response, next:express.NextFunction) => {
     if(req.path === '/login' || req.path === '/registration') 
@@ -10,7 +10,7 @@ export default (req:express.Request, res:express.Response, next:express.NextFunc
 
     verifyJWT(token)
         .then( (user:any) => {
-            req.body.user = user.data;
+            req.user = user.data;
             next()
         })
         .catch(err => {
@@ -20,5 +20,4 @@ export default (req:express.Request, res:express.Response, next:express.NextFunc
                 err
             })
         }) 
-
 }

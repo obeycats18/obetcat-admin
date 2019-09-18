@@ -5,7 +5,10 @@ export default (user:IUser) => {
     
     let token = jwt.sign( 
         {
-            data: user._id
+            data: {
+                _id: user.id,
+                role: user.role
+            }
         }, 
         process.env.JWT_SECRET || 'secret',
         {
