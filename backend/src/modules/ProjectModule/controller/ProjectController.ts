@@ -6,10 +6,9 @@ import { IUser } from '../../UserModule/schemas/UserSchema';
 export class ProjectController {
 
     index (req: express.Request, res: express.Response) {
-        let user = req.user;
+        let user = req.user; //decoded data from token
         
-        if(user.role === Roles.Client || user.role === Roles.Developer) {
-            ProjectModel.find( {owner: user._id} )
+        ProjectModel.find( {owner: user._id} )
             .populate('owner')
             .exec( (err, project) => {
                 if(err){
@@ -24,18 +23,19 @@ export class ProjectController {
                     project
                 } )
             })
-        }
 
     }
 
     add(req: express.Request, res: express.Response) {
         let userId = req.user._id ;
+        let teamLeadId = req.body.tlId //id team lead
+        let clientId = req.body.clientId //id client
         let postData = {
             name: req.body.name,
             image: req.body.image,
             cost: req.body.cost,
             dateToFinish: req.body.dateToFinish,
-            owner: userId
+            owner: [userId]
         }
 
         ProjectModel.findOne({name: postData.name})
@@ -43,11 +43,12 @@ export class ProjectController {
             .then(project => {
                 if(project){
                     return res.send({
-                        message: 'Project is exicted',
-                        status: 409
+                        status: 409,
+                        message: 'Project is exicted'
                     })
                 }
-                
+                postData.owner.push(teamLeadId, clientId)
+
                 new ProjectModel(postData).save( (err) => {
                     if(err){
                         return res.json({

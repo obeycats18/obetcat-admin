@@ -31,11 +31,10 @@ export let ProjectSchema = new Schema({
     procentComplete: {
         type: Number
     },
-    owner: {
+    owner: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
-    },
-    // milestones: [MilestoneModel]
+    }]
 })
 
 
