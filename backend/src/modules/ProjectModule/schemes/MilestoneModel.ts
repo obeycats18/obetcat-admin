@@ -1,6 +1,4 @@
 import mongoose, {Schema}  from 'mongoose'
-import { Document } from 'mongoose';
-import { TaskModel, EditsModel, HistoryModel } from '../models/models';
 
 
 // export interface IUser extends Document{
@@ -31,8 +29,13 @@ export let MilestoneShema = new Schema({
         type: Number
     },
     developer: {
-        type: mongoose.Schema.Types.ObjectId
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
+    projectID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Projects'
+    }
     // task: [TaskModel],
     // edits: [EditsModel],
     // history: [HistoryModel]

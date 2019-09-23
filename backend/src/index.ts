@@ -7,6 +7,7 @@ import bodyParser from 'body-parser'
 import UserRouter from './modules/UserModule/routes/UserRoutes'
 import AuthRouter from './modules/AuthModule/routes/AuthRoutes'
 import ProjectRoutes from './modules/ProjectModule/routes/ProjectRoutes'
+import MilestonesRoutes from './modules/ProjectModule/routes/MilestonesRoutes'
 import checkAuth from './middlewares/checkAuth';
 import db from './middlewares/db'
 
@@ -24,6 +25,7 @@ app.use(checkAuth)
 app.use('/user', UserRouter)
 app.use('', AuthRouter)
 app.use('', ProjectRoutes)
+app.use('', MilestonesRoutes)
 
 app.listen(process.env.EXPRESS_PORT, () => {
     console.log('Server starting...');

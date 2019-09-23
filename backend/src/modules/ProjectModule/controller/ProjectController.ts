@@ -1,7 +1,5 @@
 import express from 'express'
 import { ProjectModel } from '../models/models'
-import { Roles } from '../enum/RoleEnum';
-import { IUser } from '../../UserModule/schemas/UserSchema';
 
 export class ProjectController {
 
@@ -9,7 +7,7 @@ export class ProjectController {
         let user = req.user; //decoded data from token
         
         ProjectModel.find( {owner: user._id} )
-            .populate('owner')
+            .populate(['owner', 'milestones'])
             .exec( (err, project) => {
                 if(err){
                     return res.json({
@@ -23,19 +21,20 @@ export class ProjectController {
                     project
                 } )
             })
-
     }
 
     add(req: express.Request, res: express.Response) {
-        let userId = req.user._id ;
-        let teamLeadId = req.body.tlId //id team lead
+        let userId = req.user._id ; // current user id
+        let teamLeadId = req.body.teamLeadId //id team lead
         let clientId = req.body.clientId //id client
+        
         let postData = {
             name: req.body.name,
             image: req.body.image,
             cost: req.body.cost,
             dateToFinish: req.body.dateToFinish,
-            owner: [userId]
+            owner: [userId],
+            milestones: []
         }
 
         ProjectModel.findOne({name: postData.name})
@@ -69,8 +68,26 @@ export class ProjectController {
                     err
                 })
             })
+    }
 
+    specifiedProject (req: express.Request, res: express.Response) {
+        let id = req.body.id; //specified id project
         
+        ProjectModel.findById(id)
+            .populate(['owner', 'milestones'])
+            .exec( (err, project) => {
+                if(err ){
+                    return res.json({
+                        status: 404,
+                        message: 'Projects not found'
+                    })
+                }
+                
+                res.json( {
+                    status: 200,
+                    project
+                } )
+            })
     }
 
 }

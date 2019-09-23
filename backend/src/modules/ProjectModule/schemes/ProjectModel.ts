@@ -34,6 +34,10 @@ export let ProjectSchema = new Schema({
     owner: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
+    }],
+    milestones: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Milestones' 
     }]
 })
 
