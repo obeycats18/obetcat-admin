@@ -14,7 +14,7 @@ export class DBModule{
     }
 
     connection = (url: string) =>{
-        mongoose.connect(`${url}`, {useNewUrlParser:true}).catch( error => console.log(error));
+        mongoose.connect(`${url}`, {useNewUrlParser:true, useFindAndModify: false}).catch( error => console.log(error));
     }
 
 }

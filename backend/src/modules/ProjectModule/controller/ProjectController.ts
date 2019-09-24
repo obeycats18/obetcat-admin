@@ -3,13 +3,34 @@ import { ProjectModel } from '../models/models'
 
 export class ProjectController {
 
-    index (req: express.Request, res: express.Response) {
+    default (req: express.Request, res: express.Response) {
         let user = req.user; //decoded data from token
         
         ProjectModel.find( {owner: user._id} )
             .populate(['owner', 'milestones'])
             .exec( (err, project) => {
                 if(err){
+                    return res.json({
+                        status: 404,
+                        message: 'Projects not found'
+                    })
+                }
+                
+                res.json( {
+                    status: 200,
+                    project
+                } )
+            })
+    }
+
+
+    index (req: express.Request, res: express.Response) {
+        let id = req.body.id; //specified id project
+        
+        ProjectModel.findById(id)
+            .populate(['owner', 'milestones'])
+            .exec( (err, project) => {
+                if(err ){
                     return res.json({
                         status: 404,
                         message: 'Projects not found'
@@ -33,8 +54,7 @@ export class ProjectController {
             image: req.body.image,
             cost: req.body.cost,
             dateToFinish: req.body.dateToFinish,
-            owner: [userId],
-            milestones: []
+            owner: [userId]
         }
 
         ProjectModel.findOne({name: postData.name})
@@ -70,25 +90,6 @@ export class ProjectController {
             })
     }
 
-    specifiedProject (req: express.Request, res: express.Response) {
-        let id = req.body.id; //specified id project
-        
-        ProjectModel.findById(id)
-            .populate(['owner', 'milestones'])
-            .exec( (err, project) => {
-                if(err ){
-                    return res.json({
-                        status: 404,
-                        message: 'Projects not found'
-                    })
-                }
-                
-                res.json( {
-                    status: 200,
-                    project
-                } )
-            })
-    }
 
 }
 
