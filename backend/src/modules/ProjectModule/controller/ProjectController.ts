@@ -90,7 +90,28 @@ export class ProjectController {
             })
     }
 
+    edit(req: express.Request, res: express.Response){
+        let id = req.body.id;
+        let milestioneId = req.body.milestioneId;
 
+        ProjectModel.findByIdAndUpdate(id, 
+            {"$push": {"milestones" : milestioneId}},
+            {"new": true, "upsert": true},
+            (err) => {
+                if(err){
+                    return res.json({
+                        status: 500,
+                        err 
+                    })
+                }
+    
+                return res.json({
+                    status: 200,
+                    message: 'Sucssesfully!'
+                })
+            } 
+        )
+    }
 }
 
 // Todo add validation for Date type

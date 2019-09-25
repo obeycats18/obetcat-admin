@@ -13,7 +13,7 @@ export class MilestonesController {
                 })
             }
 
-            res.json({
+            return res.json({
                 status: 200,
                 milestones
             })
@@ -24,7 +24,7 @@ export class MilestonesController {
 
         let postData = {
             idProject: req.body.idProject,
-            milestones: [] as any
+            milestones: [] as Array<Object>
         }
         let milestoneData = {
             name: req.body.name,
@@ -36,25 +36,19 @@ export class MilestonesController {
         }
 
         
-        MilestoneModel.findOne({'milestones.name': milestoneData.name}, ( err, milestone ) => {
+        MilestoneModel.findOne({idProject: postData.idProject}, ( err, set: Object | any) => {
+            
             if(err) {
                 console.log(err)
                 return res.json({
                     status: 500,
                     err
                 })
-            }
+            }        
 
-            if(milestone){
-                return res.json({
-                    status: 409,
-                    message: 'Milestone is existed'
-                })
-            }
-
-            if(postData.milestones.lenght === 0){
+            if(!set) {
                 postData.milestones.push(milestoneData);
-                new MilestoneModel(postData).save( (err) => {
+                new MilestoneModel(postData).save( (err, set) => {
                     if(err){
                         return res.json({
                             status: 500,
@@ -62,12 +56,23 @@ export class MilestonesController {
                         })
                     }
         
-                    res.json({
+                    return res.json({
                         status: 200,
-                        message: 'Sucssesfully!'
+                        message: 'Sucssesfully!',
+                        id: set._id
                     })
                 })
             }else{
+
+                let isExisted = checkIsExisted(set, milestoneData.name)
+
+                if(isExisted){
+                    return res.json({
+                        status: 409,
+                        message: 'Milestone is existed'
+                    })
+                }
+
                 MilestoneModel.findOneAndUpdate({idProject: postData.idProject}, 
                     {"$push": {"milestones" : milestoneData}},
                     {"new": true, "upsert": true},
@@ -79,17 +84,25 @@ export class MilestonesController {
                             })
                         }
             
-                        res.json({
+                        return res.json({
                             status: 200,
-                            message: 'Sucssesfully!'
+                            message: 'Sucssesfully!',
+                            id: set._id
                         })
                     } 
                 )
             }
-
         })
     }
 
+}
+
+
+let checkIsExisted = (set:Array<Object> | any | null, name: string): boolean => {
+
+    if( !set.milestones.find( (item:any) => {return item.name === name} )) return false;
+    
+    return true
 }
 
 // Todo add validation 
