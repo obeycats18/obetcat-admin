@@ -53,7 +53,7 @@ export class ProjectController {
             name: req.body.name,
             image: req.body.image,
             cost: req.body.cost,
-            dateToFinish: req.body.dateToFinish,
+            dateToFinish: new Date(req.body.dateToFinish).toLocaleDateString(),
             owner: [userId]
         }
 
@@ -93,9 +93,10 @@ export class ProjectController {
     edit(req: express.Request, res: express.Response){
         let id = req.body.id;
         let milestioneId = req.body.milestioneId;
+        let developerId = req.body.developerId;
 
         ProjectModel.findByIdAndUpdate(id, 
-            {"$push": {"milestones" : milestioneId}},
+            {"$push": {"milestones" : milestioneId , "owner" : developerId}},
             {"new": true, "upsert": true},
             (err) => {
                 if(err){
