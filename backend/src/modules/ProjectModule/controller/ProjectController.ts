@@ -1,5 +1,6 @@
 import express from 'express'
 import { ProjectModel } from '../models/models'
+import { dateFormat } from '../../../helper/dateFormat';
 
 export class ProjectController {
 
@@ -32,12 +33,19 @@ export class ProjectController {
             .exec( (err, project) => {
                 if(err ){
                     return res.json({
+                        status: 500,
+                        err
+                    })
+                }
+
+                if(!project) {
+                    return res.json({
                         status: 404,
                         message: 'Projects not found'
                     })
                 }
-                
-                res.json( {
+
+                return res.json( {
                     status: 200,
                     project
                 } )
@@ -46,14 +54,14 @@ export class ProjectController {
 
     add(req: express.Request, res: express.Response) {
         let userId = req.user._id ; // current user id
-        let teamLeadId = req.body.teamLeadId //id team lead
-        let clientId = req.body.clientId //id client
+        let teamLeadId = req.body.teamLeadId;//id team lead
+        let clientId = req.body.clientId; //id client
         
         let postData = {
             name: req.body.name,
             image: req.body.image,
             cost: req.body.cost,
-            dateToFinish: new Date(req.body.dateToFinish).toLocaleDateString(),
+            dateToFinish: dateFormat(new Date(req.body.dateToFinish)),
             owner: [userId]
         }
 
@@ -115,5 +123,4 @@ export class ProjectController {
     }
 }
 
-// Todo add validation for Date type
 // Fixed req.user type. Now I use passport type

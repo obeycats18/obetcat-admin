@@ -5,8 +5,8 @@ let router = express.Router();
 
 let User = new UserController()
 
-router.get('/', User.index)
-router.delete('/delete', User.delete)
-router.get('/me', User.getMe)
+router.get('/user', User.index)
+router.delete('/user/delete', User.delete)
+router.get('/user/me', User.getMe)
 
 export default router

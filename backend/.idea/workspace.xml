@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c5d34fc1-cf68-4a39-b84c-4afefee49236" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/backend.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/helper/checkIsExisted.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/modules/AuthModule/routes/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/modules/ProjectModule/controller/TaskController.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/modules/ProjectModule/queries/update.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/modules/ProjectModule/routes/TaskRoutes.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/modules/ProjectModule/routes/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/modules/UserModule/routes/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/ProjectModule/controller/MilestonesController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/ProjectModule/controller/MilestonesController.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/ProjectModule/controller/ProjectController.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/ProjectModule/controller/ProjectController.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/ProjectModule/enum/RoleEnum.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/ProjectModule/models/models.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/ProjectModule/models/models.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/ProjectModule/schemes/MilestoneModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/ProjectModule/schemes/MilestoneModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/ProjectModule/schemes/ProjectModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/ProjectModule/schemes/ProjectModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/ProjectModule/schemes/TaskModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/ProjectModule/schemes/TaskModel.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules/UserModule/routes/UserRoutes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules/UserModule/routes/UserRouter.ts" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1RPumqB6FQOdubzBUPjMj1OWbtB" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.start" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c5d34fc1-cf68-4a39-b84c-4afefee49236" name="Default Changelist" comment="" />
+      <created>1569581213267</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1569581213267</updated>
+      <workItem from="1569581214454" duration="19405000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

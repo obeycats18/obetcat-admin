@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/cookie-parser": "^1.4.2",
+    "@types/flat": "0.0.28",
     "@types/jsonwebtoken": "^8.3.3",
     "@types/lodash": "^4.14.138",
     "@types/passport": "^1.0.1",
@@ -19,6 +20,7 @@
     "cookie-parser": "^1.4.4",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
+    "flat": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongoose": "^5.6.12",

@@ -1,14 +1,23 @@
 import mongoose, {Schema}  from 'mongoose'
 import { Document } from 'mongoose';
-import { MilestoneModel } from '../models/models';
 
 
-// export interface IUser extends Document{
-//     fullname: string ;
-//     email: string;
-//     password: string ;
-//     role: string ;
-// }
+export interface IProject extends Document{
+    name: string ;
+    isDeveloped?: boolean;
+    image?: string ;
+    cost: number ;
+    dateToFinish: string;
+    procentComplete?: number
+    owner: [{
+        type: Schema.Types.ObjectId,
+        ref: string
+    }];
+    milestones?: [{
+        type: Schema.Types.ObjectId,
+        ref: string
+    }];
+}
 
 export let ProjectSchema = new Schema({
     name: {

@@ -10,18 +10,29 @@ import { Document } from 'mongoose';
 // }
 
 export let TaskSchema = new Schema({
-    text: {
-        type: String,
-        default: ''
+    idProject: {
+        type: Schema.Types.ObjectId,
+        ref: 'Projects'
     },
-    isFinished: {
-        type: Boolean,
-        required: [true, 'isFinished is required!']
-    },
-    millestone: {
-        type: mongoose.Schema.Types.ObjectId
-    }
-})
+    set: [{
+        idMilestone: {
+            type: Schema.Types.ObjectId,
+            ref: 'Milestones'
+        },
+        tasks: [{
+            text: {
+                type: String,
+                required: [true, 'Text for task is required!']
+            },
+            isDevelop: {
+                type: Boolean
+            },
+            dateToFinish: {
+                type: String
+            }
+        }]
+    }]
+});
 
 
 

@@ -4,29 +4,26 @@ import bodyParser from 'body-parser'
 
 
 //Modules
-import UserRouter from './modules/UserModule/routes/UserRoutes'
-import AuthRouter from './modules/AuthModule/routes/AuthRoutes'
-import ProjectRoutes from './modules/ProjectModule/routes/ProjectRoutes'
-import MilestonesRoutes from './modules/ProjectModule/routes/MilestonesRoutes'
 import checkAuth from './middlewares/checkAuth';
 import db from './middlewares/db'
+import {index} from "./routes";
 
 dotenv.config({path: __dirname + '/.env'});
 
 const app = express();
 
-app.use(db)
+app.use(db);
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(checkAuth)
+//Check JWT Token
+app.use(checkAuth);
 
-app.use('/user', UserRouter)
-app.use('', AuthRouter)
-app.use('', ProjectRoutes)
-app.use('', MilestonesRoutes)
+//Routers
+index(app);
+
 
 app.listen(process.env.EXPRESS_PORT, () => {
     console.log('Server starting...');
-})
+});

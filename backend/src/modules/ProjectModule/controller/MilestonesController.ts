@@ -1,5 +1,8 @@
 import express from 'express'
 import { MilestoneModel } from '../models/models';
+import {checkIsExisted} from  '../../../helper/checkIsExisted'
+import {dateFormat} from "../../../helper/dateFormat";
+import {update} from "../queries/update";
 
 export class MilestonesController {
 
@@ -25,15 +28,15 @@ export class MilestonesController {
         let postData = {
             idProject: req.body.idProject,
             milestones: [] as Array<Object>
-        }
+        };
         let milestoneData = {
             name: req.body.name,
             isDeveloped: true,
             isNoReturn: req.body.isNoReturn,
-            dateToFinish: req.body.dateToFinish,
+            dateToFinish: dateFormat(new Date(req.body.dateToFinish)),
             procentComplete: 50,
             developer: req.body.developer
-        }
+        };
 
         
         MilestoneModel.findOne({idProject: postData.idProject}, ( err, set: Object | any) => {
@@ -52,19 +55,19 @@ export class MilestonesController {
                     if(err){
                         return res.json({
                             status: 500,
-                            err 
+                            err
                         })
                     }
-        
+
                     return res.json({
                         status: 200,
                         message: 'Sucssesfully!',
-                        id: set._id
+                        id: set
                     })
                 })
             }else{
 
-                let isExisted = checkIsExisted(set, milestoneData.name)
+                let isExisted = checkIsExisted(set.milestones, milestoneData.name)
 
                 if(isExisted){
                     return res.json({
@@ -73,24 +76,14 @@ export class MilestonesController {
                     })
                 }
 
-                MilestoneModel.findOneAndUpdate({idProject: postData.idProject}, 
-                    {"$push": {"milestones" : milestoneData}},
-                    {"new": true, "upsert": true},
-                    (err) => {
-                        if(err){
-                            return res.json({
-                                status: 500,
-                                err 
-                            })
-                        }
-            
+                update(MilestoneModel, {'idProject': postData.idProject}, '$push', {"milestones" : milestoneData},
+                    (set) => {
                         return res.json({
                             status: 200,
                             message: 'Sucssesfully!',
-                            id: set._id
+                            id: set
                         })
-                    } 
-                )
+                });
             }
         })
     }
@@ -98,11 +91,6 @@ export class MilestonesController {
 }
 
 
-let checkIsExisted = (set:Array<Object> | any | null, name: string): boolean => {
 
-    if( !set.milestones.find( (item:any) => {return item.name === name} )) return false;
-    
-    return true
-}
 
 // Todo add validation 

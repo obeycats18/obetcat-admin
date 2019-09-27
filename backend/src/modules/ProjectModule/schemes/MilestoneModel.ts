@@ -29,7 +29,7 @@ export let MilestoneShema = new Schema({
             required: [true, 'isNoReturn is required!']
         },
         dateToFinish: {
-            type: Date,
+            type: String,
             required: [true, 'Date To Finish is required!']
         },
         procentComplete: {
@@ -38,9 +38,13 @@ export let MilestoneShema = new Schema({
         developer: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
-        }
-    }]
-    // task: [TaskModel],
+        },
+        task: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Tasks'
+        }],
+    }],
+
     // edits: [EditsModel],
     // history: [HistoryModel]
 })
