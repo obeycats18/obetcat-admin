@@ -40,12 +40,13 @@ export class TaskController {
             text: req.body.text
         };
 
-        TaskModel.findOne({idProject: postData.idProject}, (err, set: any) => {
-            if(!set){
+        TaskModel.findOne({idProject: postData.idProject}, (err, set) => {
+            if(!set) {
+
                 tasksReq.tasks.push(taskData);
                 postData.set.push(tasksReq);
-                new TaskModel(postData).save( (err, set) => {
-                    if(err) {
+                new TaskModel(postData).save( (err, taskSet) => {
+                    if(err){
                         return res.json({
                             status: 500,
                             err
@@ -54,41 +55,57 @@ export class TaskController {
 
                     return res.json({
                         status: 200,
-                        message: 'Sucssesfully!',
-                        set
+                        taskSet
                     })
+
                 })
-            }else{
+            }
+            else{
 
-                //TODO  Create findOneAndUpdate method for Task
-
-                // update(TaskModel, {'idProject': postData.idProject}, '$push', {"set.tasks": taskData},
-                //     (set) => {
-                //         return res.json({
-                //             status: 200,
-                //             message: 'Sucssesfully!',
-                //             id: set
-                //         })
-                //     })
-                TaskModel.findOneAndUpdate({'set.idMilestone': tasksReq.idMilestone},
-                    {'$push': {tasks: tasksReq} },
-                    {"new": true, "upsert": true},
-                    (err, set) => {
-
-                                if(err) {
+                TaskModel.findOne({"set.idMilestone": tasksReq.idMilestone}, (err, milestoneSet) => {
+                    if(!milestoneSet) {
+                        
+                        tasksReq.tasks.push(taskData);
+                        TaskModel.findOneAndUpdate({idProject: postData.idProject}, 
+                            {"$push": {set: tasksReq}},
+                            {"new": true, "upsert": true},
+                            (err, set) => {
+                                if(err){
                                     return res.json({
                                         status: 500,
                                         err
                                     })
+                                }else{
+                                    return res.json({
+                                        status: 200,
+                                        set
+                                    })
                                 }
-
-                                return res.json({
-                                    status: 200,
-                                    message: 'Sucssesfully!',
-                                    id: set
-                                })
                             }
-                )
+                        )
+
+                    }else{
+                        TaskModel.findOneAndUpdate({"set.idMilestone": tasksReq.idMilestone}, 
+                            {"$push": {'set.$.tasks': taskData}},
+                            {"new": true, "upsert": true},
+                            (err, set) => {
+                                if(err){
+                                    return res.json({
+                                        status: 500,
+                                        err
+                                    })
+                                }else{
+                                    return res.json({
+                                        status: 200,
+                                        set
+                                    })
+                                }
+                            }
+                        )
+
+                    }
+                })
+
             }
         })
     }

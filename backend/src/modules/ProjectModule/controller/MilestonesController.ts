@@ -7,7 +7,16 @@ import {update} from "../queries/update";
 export class MilestonesController {
 
     default(req: express.Request, res: express.Response){
-        MilestoneModel.find({idProject: req.body.idProject}, (err, milestones) => {
+        MilestoneModel.find({idProject: req.body.idProject})
+        .populate('tasks')
+        .exec()
+        .then(milestones => {
+            return res.json({
+                status: 200,
+                milestones
+            })
+        })
+        .catch(err => {
             if(err) {
                 console.log(err)
                 return res.json({
@@ -16,12 +25,32 @@ export class MilestonesController {
                 })
             }
 
-            return res.json({
-                status: 200,
-                milestones
-            })
+            
         })
     }  
+
+    edit(req: express.Request, res: express.Response) {
+        let id = req.body.id
+        let tasksId = req.body.tasksId;
+        MilestoneModel.findByIdAndUpdate(id, 
+            {"$push": {"tasks" : tasksId}},
+            {"new": true, "upsert": true},
+            (err, set) => {
+                if(err){
+                    return res.json({
+                        status: 500,
+                        err 
+                    })
+                }
+    
+                return res.json({
+                    status: 200,
+                    message: 'Sucssesfully!',
+                    set
+                })
+            } 
+        )
+    }
 
     add(req: express.Request, res: express.Response) {
 
@@ -62,7 +91,7 @@ export class MilestonesController {
                     return res.json({
                         status: 200,
                         message: 'Sucssesfully!',
-                        id: set
+                        set
                     })
                 })
             }else{
@@ -81,7 +110,7 @@ export class MilestonesController {
                         return res.json({
                             status: 200,
                             message: 'Sucssesfully!',
-                            id: set
+                            set
                         })
                 });
             }

@@ -103,6 +103,8 @@ export class ProjectController {
         let milestioneId = req.body.milestioneId;
         let developerId = req.body.developerId;
 
+        // Add check if milestone is existed
+
         ProjectModel.findByIdAndUpdate(id, 
             {"$push": {"milestones" : milestioneId , "owner" : developerId}},
             {"new": true, "upsert": true},

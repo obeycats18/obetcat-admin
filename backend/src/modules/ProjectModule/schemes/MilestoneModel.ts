@@ -39,7 +39,7 @@ export let MilestoneShema = new Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
-        task: [{
+        tasks: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Tasks'
         }],
