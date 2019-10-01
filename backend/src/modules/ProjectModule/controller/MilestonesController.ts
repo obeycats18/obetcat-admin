@@ -2,55 +2,54 @@ import express from 'express'
 import { MilestoneModel } from '../models/models';
 import {checkIsExisted} from  '../../../helper/checkIsExisted'
 import {dateFormat} from "../../../helper/dateFormat";
-import {update} from "../queries/update";
+import {update, findOne, find, findByIdAndUpdate} from "../../../db/queries/queries";
 
 export class MilestonesController {
 
     default(req: express.Request, res: express.Response){
-        MilestoneModel.find({idProject: req.body.idProject})
-        .populate('tasks')
-        .exec()
-        .then(milestones => {
-            return res.json({
-                status: 200,
-                milestones
-            })
-        })
-        .catch(err => {
-            if(err) {
-                console.log(err)
-                return res.json({
-                    status: 500,
-                    err
-                })
-            }
 
-            
-        })
-    }  
-
-    edit(req: express.Request, res: express.Response) {
-        let id = req.body.id
-        let tasksId = req.body.tasksId;
-        MilestoneModel.findByIdAndUpdate(id, 
-            {"$push": {"tasks" : tasksId}},
-            {"new": true, "upsert": true},
-            (err, set) => {
-                if(err){
-                    return res.json({
-                        status: 500,
-                        err 
-                    })
-                }
-    
+        // MilestoneModel.find({idProject: req.body.idProject})
+        let id = req.body.idProject;
+        find(MilestoneModel, {idProject: id})
+            .populate('tasks')
+            .exec()
+            .then(milestones => {
                 return res.json({
                     status: 200,
-                    message: 'Sucssesfully!',
-                    set
+                    milestones
                 })
-            } 
-        )
-    }
+            })
+            .catch(err => {
+                if(err) {
+                    console.log(err)
+                    return res.json({
+                        status: 500,
+                        err
+                    })
+                }
+
+                
+            })
+    }  
+
+    // edit(req: express.Request, res: express.Response) {
+    //     let id = req.body.id
+    //     let tasksId = req.body.tasksId;
+
+    //     findByIdAndUpdate(MilestoneModel, id, {"$push": {"tasks" : tasksId}}, (err, set) => {
+    //         if(err){
+    //             return res.json({
+    //                 status: 500,
+    //                 err 
+    //             })
+    //         }
+    //         return res.json({
+    //             status: 200,
+    //             message: 'Sucssesfully!',
+    //             set
+    //         })
+    //     } )
+    // }
 
     add(req: express.Request, res: express.Response) {
 
@@ -68,7 +67,7 @@ export class MilestonesController {
         };
 
         
-        MilestoneModel.findOne({idProject: postData.idProject}, ( err, set: Object | any) => {
+        findOne(MilestoneModel, {idProject: postData.idProject}, ( err, set: Object | any) => {
             
             if(err) {
                 console.log(err)
@@ -105,14 +104,19 @@ export class MilestonesController {
                     })
                 }
 
-                update(MilestoneModel, {'idProject': postData.idProject}, '$push', {"milestones" : milestoneData},
-                    (set) => {
+                update(MilestoneModel, {'idProject': postData.idProject}, {"$push": {"milestones" : milestoneData}}, (err, set) => {
+                    if(err){
+                        return res.json({
+                            status: 500,
+                            err
+                        })
+                    }else{
                         return res.json({
                             status: 200,
-                            message: 'Sucssesfully!',
                             set
                         })
-                });
+                    }
+                })
             }
         })
     }

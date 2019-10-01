@@ -1,13 +1,15 @@
 import express from 'express'
 import { ProjectModel } from '../models/models'
 import { dateFormat } from '../../../helper/dateFormat';
+import { findOne, findById, find, findByIdAndUpdate } from '../../../db/queries/queries';
 
 export class ProjectController {
 
     default (req: express.Request, res: express.Response) {
         let user = req.user; //decoded data from token
-        
-        ProjectModel.find( {owner: user._id} )
+
+        // ProjectModel.find( {owner: user._id}         
+        find(ProjectModel, {owner: user._id})
             .populate(['owner', 'milestones'])
             .exec( (err, project) => {
                 if(err){
@@ -27,8 +29,8 @@ export class ProjectController {
 
     index (req: express.Request, res: express.Response) {
         let id = req.body.id; //specified id project
-        
-        ProjectModel.findById(id)
+
+        findById(ProjectModel, id)
             .populate(['owner', 'milestones'])
             .exec( (err, project) => {
                 if(err ){
@@ -65,50 +67,16 @@ export class ProjectController {
             owner: [userId]
         }
 
-        ProjectModel.findOne({name: postData.name})
-            .exec()
-            .then(project => {
-                if(project){
-                    return res.send({
-                        status: 409,
-                        message: 'Project is exicted'
-                    })
-                }
-                postData.owner.push(teamLeadId, clientId)
-
-                new ProjectModel(postData).save( (err) => {
-                    if(err){
-                        return res.json({
-                            status: 500,
-                            err 
-                        })
-                    }
-        
-                    res.json({
-                        status: 200,
-                        message: 'Sucssesfully!'
-                    })
+        findOne(ProjectModel, {name: postData.name}, (err, project) => {
+            if(project){
+                return res.send({
+                    status: 409,
+                    message: 'Project is exicted'
                 })
-            })
-            .catch(err => {
-                res.json({
-                    status: 500,
-                    err
-                })
-            })
-    }
+            }
+            postData.owner.push(teamLeadId, clientId)
 
-    edit(req: express.Request, res: express.Response){
-        let id = req.body.id;
-        let milestioneId = req.body.milestioneId;
-        let developerId = req.body.developerId;
-
-        // Add check if milestone is existed
-
-        ProjectModel.findByIdAndUpdate(id, 
-            {"$push": {"milestones" : milestioneId , "owner" : developerId}},
-            {"new": true, "upsert": true},
-            (err) => {
+            new ProjectModel(postData).save( (err) => {
                 if(err){
                     return res.json({
                         status: 500,
@@ -116,12 +84,33 @@ export class ProjectController {
                     })
                 }
     
-                return res.json({
+                res.json({
                     status: 200,
-                    message: 'Sucssesfully!'
+                    message: 'Sucssesfully!',
+                    project
                 })
-            } 
-        )
+            })
+        })
+    }
+
+    edit(req: express.Request, res: express.Response){
+        let id = req.body.id;
+        let milestioneId = req.body.milestioneId;
+        let developerId = req.body.developerId;
+        
+        findByIdAndUpdate(ProjectModel, id, {"$push": {"milestones" : milestioneId , "owner" : developerId}}, (err, project) => {
+            if(err){
+                return res.json({
+                    status: 500,
+                    err 
+                })
+            }
+            return res.json({
+                status: 200,
+                message: 'Sucssesfully!',
+                project
+            })
+        } )
     }
 }
 

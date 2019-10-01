@@ -1,61 +1,83 @@
 import { UserModel } from "../schemas/UserSchema";
 import express from 'express'
+import { find, findById, findByIdAndRemove } from "../../../db/queries/queries";
 
 
 export class UserController {
 
     // route( '/')
     index = (req:express.Request, res:express.Response) => {
-        UserModel.find({}, (err, docs) => {
-            if(err) {
-                res.send( {
-                    status: 500
-                } )
-            }else{
-                if(docs.length > 0){
-                    res.send({
-                        users: docs
+        find(UserModel, {})
+            .exec()
+            .then(users => {
+                if(!users){
+                    return res.json({
+                        status: 404,
+                        message: 'User not found'
                     });
-                }else{
-                    res.send({
-                        message: 'Empty User list'
-                    })
                 }
-            }
-        })
+                return res.json({
+                    status: 200,
+                    users
+                })
+            })
+            .catch(err => {
+                return res.json({
+                    status: 500,
+                    err
+                })
+            })
     }
 
     // route( '/delete')
     delete = (req:express.Request, res:express.Response) => {
         let userId = req.body.id
-        UserModel.findByIdAndRemove(userId, (err) => {
-            if(err) {
-                res.send( {
-                    message: 'User Not Found',
-                    status: 404
+        findByIdAndRemove(UserModel, userId)
+            .exec()
+            .then( (user) => {
+
+                if(!user) {
+                    return res.json( {
+                        message: 'User Not Found',
+                        status: 404
+                    })
+                }
+
+                return res.json( {
+                    status: 200,
+                    message: 'User deleted successfully!'
+                } )
+            })
+            .catch( err => {
+                return res.json({
+                    status: 500,
+                    err
                 })
-            }
-            res.send( {
-                message: 'User deleted successfully!',
-                status: 200
-            } )
-        })
+            })
     }
 
     getMe = (req:express.Request, res:express.Response) => {
-        let userId = req.body.user._id
-        UserModel.findById(userId, (err, docs) => {
-            if(err) {
-                res.send( {
-                    status: 500
-                } )
-            }else{
-                res.json({
+        let userId = req.user._id
+        findById(UserModel, userId )
+            .exec()
+            .then(user => {
+                if(!user) {
+                    return res.json( {
+                        status: 404,
+                        message: 'User not found'
+                    } )
+                }
+                return res.json({
                     status: 200,
-                    docs
+                    user
                 })
-            }
-        })
+            })
+            .catch(err => {
+                return res.json({
+                    status: 500,
+                    err
+                })
+            })
     }
 }
 

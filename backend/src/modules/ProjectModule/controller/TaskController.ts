@@ -1,14 +1,13 @@
 import express from 'express'
-import {MilestoneModel, ProjectModel, TaskModel} from "../models/models";
-import {checkIsExisted} from "../../../helper/checkIsExisted";
-import {update} from "../queries/update";
-import flatten = require("flat");
+import {TaskModel} from "../models/models";
+import {update, findOne, findById} from "../../../db/queries/queries";
 
 export class TaskController {
 
     index(req: express.Request, res: express.Response) {
         let id = req.body.id; // set ID
-        TaskModel.findById(id)
+        // TaskModel.findById(id)
+        findById(TaskModel, id)
             .populate('tasks')
             .exec((err, taskSet) => {
                 if (err) {
@@ -40,9 +39,10 @@ export class TaskController {
             text: req.body.text
         };
 
-        TaskModel.findOne({idProject: postData.idProject}, (err, set) => {
-            if(!set) {
+        // findOne(TaskModel, {idProject: postData.idProject}, )
 
+        findOne(TaskModel, {idProject: postData.idProject}, (err, set) => {
+            if(!set) {
                 tasksReq.tasks.push(taskData);
                 postData.set.push(tasksReq);
                 new TaskModel(postData).save( (err, taskSet) => {
@@ -62,46 +62,41 @@ export class TaskController {
             }
             else{
 
-                TaskModel.findOne({"set.idMilestone": tasksReq.idMilestone}, (err, milestoneSet) => {
+                findOne(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, (err, milestoneSet) => {
                     if(!milestoneSet) {
                         
                         tasksReq.tasks.push(taskData);
-                        TaskModel.findOneAndUpdate({idProject: postData.idProject}, 
-                            {"$push": {set: tasksReq}},
-                            {"new": true, "upsert": true},
-                            (err, set) => {
-                                if(err){
-                                    return res.json({
-                                        status: 500,
-                                        err
-                                    })
-                                }else{
-                                    return res.json({
-                                        status: 200,
-                                        set
-                                    })
-                                }
+                        
+                        update(TaskModel, {idProject: postData.idProject}, {"$push": {set: tasksReq}}, (err, set) => {
+                            if(err){
+                                return res.json({
+                                    status: 500,
+                                    err
+                                })
+                            }else{
+                                return res.json({
+                                    status: 200,
+                                    set
+                                })
                             }
-                        )
+                        })
 
+                        
                     }else{
-                        TaskModel.findOneAndUpdate({"set.idMilestone": tasksReq.idMilestone}, 
-                            {"$push": {'set.$.tasks': taskData}},
-                            {"new": true, "upsert": true},
-                            (err, set) => {
-                                if(err){
-                                    return res.json({
-                                        status: 500,
-                                        err
-                                    })
-                                }else{
-                                    return res.json({
-                                        status: 200,
-                                        set
-                                    })
-                                }
+
+                        update(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, {"$push": {'set.$.tasks': taskData}}, (err, set) => {
+                            if(err){
+                                return res.json({
+                                    status: 500,
+                                    err
+                                })
+                            }else{
+                                return res.json({
+                                    status: 200,
+                                    set
+                                })
                             }
-                        )
+                        })
 
                     }
                 })
