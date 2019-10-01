@@ -2,6 +2,8 @@ import { UserModel, IUser } from "../../UserModule/schemas/UserSchema";
 import express from 'express'
 import createToken from "../jwt/createToken";
 import bcrypt from 'bcrypt'
+import { findOne } from "../../../db/queries/queries";
+import { handleError } from "../../../middlewares/errorHandling/errorHandling";
 
 
 export class AuthController {
@@ -11,31 +13,30 @@ export class AuthController {
 
         let newUser = req.body
         
-        UserModel.findOne({email: newUser.email})
-            .exec()
-            .then(user => {
-                if(user){
-                    return res.send({
-                        message: 'User is exicted',
-                        status: 409
+        findOne(UserModel, {email: newUser.email}, (err, user) => {
+
+            if(err){
+                return handleError( {message: err.message, status: 500}, res)
+            }
+
+            if(user){
+                return res.send({
+                    message: 'User is exicted',
+                    status: 409
+                })
+            }
+
+            new UserModel(newUser).save( ( err ) => {
+                if(err){
+                    return handleError( {message: err.message, status: 500}, res)
+                }else{
+                    res.send({
+                        message: 'User creted successfully',
+                        status: 201
                     })
                 }
-
-                new UserModel(newUser).save( ( err ) => {
-                    if(err){
-                        res.send({
-                            message: err,
-                            status: 500
-                        })
-                    }else{
-                        res.send({
-                            message: 'User creted successfully',
-                            status: 201
-                        })
-                    }
-                })
             })
-            .catch( err => {res.send( {message: err, status: 500} )})
+        })
     }
 
     login = (req:express.Request, res:express.Response) => {
@@ -44,11 +45,9 @@ export class AuthController {
             password: req.body.password
         }
 
-        UserModel.findOne({email: postData.email}, (err:any, user:IUser) => {
+        findOne(UserModel, {email: postData.email}, (err:any, user:IUser) => {
             if(err) {
-                return res.send({
-                    err
-                })
+                return handleError( {message: err.message, status: 500}, res)
             }
             if(!user){
                 return res.send({

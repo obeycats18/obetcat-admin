@@ -11,7 +11,7 @@ export let update = (Model:mongoose.Model<any>, query:Object, action: Object, ca
     )
 };
 
-export let findOne = (Model:mongoose.Model<any>, query:Object, callback: (err:any, set:any) => void) => {
+export let findOne = (Model:mongoose.Model<any>, query:Object, callback?: (err:any, set:any) => void) => {
     Model.findOne(query, callback)
 }
 

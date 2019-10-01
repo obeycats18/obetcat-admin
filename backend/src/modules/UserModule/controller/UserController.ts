@@ -1,6 +1,7 @@
 import { UserModel } from "../schemas/UserSchema";
 import express from 'express'
 import { find, findById, findByIdAndRemove } from "../../../db/queries/queries";
+import { handleError } from "../../../middlewares/errorHandling/errorHandling";
 
 
 export class UserController {
@@ -22,10 +23,7 @@ export class UserController {
                 })
             })
             .catch(err => {
-                return res.json({
-                    status: 500,
-                    err
-                })
+                return handleError( {message: err.message, status: 500}, res)
             })
     }
 
@@ -49,10 +47,7 @@ export class UserController {
                 } )
             })
             .catch( err => {
-                return res.json({
-                    status: 500,
-                    err
-                })
+                return handleError( {message: err.message, status: 500}, res)
             })
     }
 
@@ -73,10 +68,7 @@ export class UserController {
                 })
             })
             .catch(err => {
-                return res.json({
-                    status: 500,
-                    err
-                })
+                return handleError( {message: err.message, status: 500}, res)
             })
     }
 }

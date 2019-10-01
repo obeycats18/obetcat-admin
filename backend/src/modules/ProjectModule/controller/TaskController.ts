@@ -1,19 +1,20 @@
 import express from 'express'
 import {TaskModel} from "../models/models";
 import {update, findOne, findById} from "../../../db/queries/queries";
+import { handleError } from '../../../middlewares/errorHandling/errorHandling';
 
 export class TaskController {
 
     index(req: express.Request, res: express.Response) {
         let id = req.body.id; // set ID
-        // TaskModel.findById(id)
         findById(TaskModel, id)
             .populate('tasks')
-            .exec((err, taskSet) => {
-                if (err) {
+            .exec()
+            .then(( taskSet) => {
+                if (!taskSet) {
                     return res.json({
                         status: 404,
-                        message: 'Projects not found'
+                        message: 'Set tasks not found'
                     })
                 }
 
@@ -21,6 +22,9 @@ export class TaskController {
                     status: 200,
                     taskSet
                 })
+            })
+            .catch (err => {
+                return handleError( {message: err.message, status: 500}, res)
             })
     }
 
@@ -39,18 +43,13 @@ export class TaskController {
             text: req.body.text
         };
 
-        // findOne(TaskModel, {idProject: postData.idProject}, )
-
         findOne(TaskModel, {idProject: postData.idProject}, (err, set) => {
             if(!set) {
                 tasksReq.tasks.push(taskData);
                 postData.set.push(tasksReq);
                 new TaskModel(postData).save( (err, taskSet) => {
                     if(err){
-                        return res.json({
-                            status: 500,
-                            err
-                        })
+                        return handleError( {message: err.message, status: 500}, res)
                     }
 
                     return res.json({
@@ -69,10 +68,7 @@ export class TaskController {
                         
                         update(TaskModel, {idProject: postData.idProject}, {"$push": {set: tasksReq}}, (err, set) => {
                             if(err){
-                                return res.json({
-                                    status: 500,
-                                    err
-                                })
+                                return handleError( {message: err.message, status: 500}, res)
                             }else{
                                 return res.json({
                                     status: 200,
@@ -86,10 +82,7 @@ export class TaskController {
 
                         update(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, {"$push": {'set.$.tasks': taskData}}, (err, set) => {
                             if(err){
-                                return res.json({
-                                    status: 500,
-                                    err
-                                })
+                                return handleError( {message: err.message, status: 500}, res)
                             }else{
                                 return res.json({
                                     status: 200,

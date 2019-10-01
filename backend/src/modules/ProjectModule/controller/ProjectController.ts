@@ -2,6 +2,7 @@ import express from 'express'
 import { ProjectModel } from '../models/models'
 import { dateFormat } from '../../../helper/dateFormat';
 import { findOne, findById, find, findByIdAndUpdate } from '../../../db/queries/queries';
+import { handleError } from '../../../middlewares/errorHandling/errorHandling';
 
 export class ProjectController {
 
@@ -13,10 +14,7 @@ export class ProjectController {
             .populate(['owner', 'milestones'])
             .exec( (err, project) => {
                 if(err){
-                    return res.json({
-                        status: 404,
-                        message: 'Projects not found'
-                    })
+                    return handleError( {message: err.message, status: 500}, res)
                 }
                 
                 res.json( {
@@ -34,10 +32,7 @@ export class ProjectController {
             .populate(['owner', 'milestones'])
             .exec( (err, project) => {
                 if(err ){
-                    return res.json({
-                        status: 500,
-                        err
-                    })
+                    return handleError( {message: err.message, status: 500}, res)
                 }
 
                 if(!project) {
@@ -78,10 +73,7 @@ export class ProjectController {
 
             new ProjectModel(postData).save( (err) => {
                 if(err){
-                    return res.json({
-                        status: 500,
-                        err 
-                    })
+                    return handleError( {message: err.message, status: 500}, res)
                 }
     
                 res.json({
@@ -97,13 +89,10 @@ export class ProjectController {
         let id = req.body.id;
         let milestioneId = req.body.milestioneId;
         let developerId = req.body.developerId;
-        
+
         findByIdAndUpdate(ProjectModel, id, {"$push": {"milestones" : milestioneId , "owner" : developerId}}, (err, project) => {
             if(err){
-                return res.json({
-                    status: 500,
-                    err 
-                })
+                return handleError( {message: err.message, status: 500}, res)
             }
             return res.json({
                 status: 200,

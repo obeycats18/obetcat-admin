@@ -3,12 +3,12 @@ import { MilestoneModel } from '../models/models';
 import {checkIsExisted} from  '../../../helper/checkIsExisted'
 import {dateFormat} from "../../../helper/dateFormat";
 import {update, findOne, find, findByIdAndUpdate} from "../../../db/queries/queries";
+import { handleError } from '../../../middlewares/errorHandling/errorHandling';
 
 export class MilestonesController {
 
     default(req: express.Request, res: express.Response){
 
-        // MilestoneModel.find({idProject: req.body.idProject})
         let id = req.body.idProject;
         find(MilestoneModel, {idProject: id})
             .populate('tasks')
@@ -20,15 +20,7 @@ export class MilestonesController {
                 })
             })
             .catch(err => {
-                if(err) {
-                    console.log(err)
-                    return res.json({
-                        status: 500,
-                        err
-                    })
-                }
-
-                
+                return handleError( {message: err.message, status: 500}, res)
             })
     }  
 
@@ -51,7 +43,7 @@ export class MilestonesController {
     //     } )
     // }
 
-    add(req: express.Request, res: express.Response) {
+    add(req: express.Request, res: express.Response, next:express.NextFunction) {
 
         let postData = {
             idProject: req.body.idProject,
@@ -70,21 +62,14 @@ export class MilestonesController {
         findOne(MilestoneModel, {idProject: postData.idProject}, ( err, set: Object | any) => {
             
             if(err) {
-                console.log(err)
-                return res.json({
-                    status: 500,
-                    err
-                })
+                return handleError( {message: err.message, status: 500}, res)
             }        
 
             if(!set) {
                 postData.milestones.push(milestoneData);
                 new MilestoneModel(postData).save( (err, set) => {
                     if(err){
-                        return res.json({
-                            status: 500,
-                            err
-                        })
+                        return handleError( {message: err.message, status: 500}, res)
                     }
 
                     return res.json({
@@ -106,10 +91,7 @@ export class MilestonesController {
 
                 update(MilestoneModel, {'idProject': postData.idProject}, {"$push": {"milestones" : milestoneData}}, (err, set) => {
                     if(err){
-                        return res.json({
-                            status: 500,
-                            err
-                        })
+                        return handleError( {message: err.message, status: 500}, res)
                     }else{
                         return res.json({
                             status: 200,
@@ -122,8 +104,5 @@ export class MilestonesController {
     }
 
 }
-
-
-
 
 // Todo add validation 
