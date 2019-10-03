@@ -8,8 +8,6 @@ import checkAuth from './middlewares/checkAuth';
 import db from './middlewares/db'
 import {index} from "./routes";
 
-import { handleError } from './middlewares/errorHandling/errorHandling';
-
 dotenv.config({path: __dirname + '/.env'});
 
 const app = express();
@@ -24,7 +22,6 @@ app.use(checkAuth);
 
 //Routers
 index(app);
-
 
 app.listen(process.env.EXPRESS_PORT, () => {
     console.log('Server starting...');

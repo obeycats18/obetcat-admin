@@ -24,8 +24,9 @@ export let TaskSchema = new Schema({
                 type: String,
                 required: [true, 'Text for task is required!']
             },
-            isDevelop: {
-                type: Boolean
+            isDeveloped: {
+                type: Boolean,
+                default: false
             },
             dateToFinish: {
                 type: String

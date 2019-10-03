@@ -1,7 +1,8 @@
 import express from 'express'
 import {TaskModel} from "../models/models";
-import {update, findOne, findById} from "../../../db/queries/queries";
+import {update, findOne, findById, find} from "../../../db/queries/queries";
 import { handleError } from '../../../middlewares/errorHandling/errorHandling';
+import mongoose from 'mongoose'
 
 export class TaskController {
 
@@ -97,5 +98,29 @@ export class TaskController {
             }
         })
     }
-}
 
+
+    edit (req: express.Request, res: express.Response) {
+        
+        let idMilestone = req.body.idMilestone;
+        let isDeveloped = req.body.isDeveloped;
+        let idTask = req.body.idTask;
+        
+        TaskModel.update(
+            {"set.idMilestone": idMilestone},
+            {$set: {"set.$.tasks.$[i].isDeveloped": isDeveloped} } ,
+
+            {"arrayFilters": [{'i._id': new mongoose.Types.ObjectId(idTask)}] },
+            (err, doc) => {
+
+                if(err){
+                    return handleError( {message: err.message, status: 500}, res)
+                }
+                return res.json({
+                    message: 200,
+                    doc
+                })
+            }
+        )
+    }
+}
