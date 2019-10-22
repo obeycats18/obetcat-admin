@@ -8,8 +8,7 @@ export class ProjectController {
 
     default (req: express.Request, res: express.Response) {
         let user = req.user; //decoded data from token
-
-        // ProjectModel.find( {owner: user._id}         
+    
         find(ProjectModel, {owner: user._id})
             .populate(['owner', 'milestones'])
             .exec( (err, project) => {
@@ -58,6 +57,7 @@ export class ProjectController {
             name: req.body.name,
             image: req.body.image,
             cost: req.body.cost,
+            isDeveloped: false,
             dateToFinish: dateFormat(new Date(req.body.dateToFinish)),
             owner: [userId]
         }
