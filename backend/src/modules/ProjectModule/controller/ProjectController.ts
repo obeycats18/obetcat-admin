@@ -4,18 +4,33 @@ import { dateFormat } from '../../../helper/dateFormat';
 import { findOne, findById, find, findByIdAndUpdate } from '../../../db/queries/queries';
 import { handleError } from '../../../middlewares/errorHandling/errorHandling';
 
+import mongoose from 'mongoose'
+import {reduce} from 'lodash'
+
 export class ProjectController {
 
     default (req: express.Request, res: express.Response) {
         let user = req.user; //decoded data from token
-    
-        find(ProjectModel, {owner: user._id})
+
+        find(ProjectModel, {'owner': {"_id": new mongoose.Types.ObjectId(user._id)}})
             .populate(['owner', 'milestones'])
             .exec( (err, project) => {
                 if(err){
                     return handleError( {message: err.message, status: 500}, res)
                 }
                 
+                // const resProject = reduce(project, (result: any, value: any, key: any) => {
+                    
+                //     if(value.owner._id === user) {
+                //         result[key] = value;
+                //     }
+
+                //     console.log(value.owner._id);
+                //     console.log(result)
+                    
+                //     return result
+                // } , {})
+
                 res.json( {
                     status: 200,
                     project
