@@ -16,21 +16,19 @@ export let MilestoneShema = new Schema({
         ref: 'Projects'
     },
     milestones: [{
-        name: {
+        milestoneName: {
             type: String,
             required: [true, 'Milestone name is required!']
         },
-        isDeveloped: {
-            type: Boolean,
-            required: [true, 'isDeveloped is required!']
+        milestoneIsDeveloped: {
+            type: Boolean
         },
         isNoReturn: {
             type: Boolean,
             required: [true, 'isNoReturn is required!']
         },
-        dateToFinish: {
-            type: String,
-            required: [true, 'Date To Finish is required!']
+        milestoneDate: {
+            type: String
         },
         procentComplete: {
             type: Number

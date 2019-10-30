@@ -65,16 +65,18 @@ export class ProjectController {
 
     add(req: express.Request, res: express.Response) {
         let userId = req.user._id ; // current user id
-        let teamLeadId = req.body.teamLeadId;//id team lead
-        let clientId = req.body.clientId; //id client
+        let teamLeadId = req.body.teamLead;//id team lead
+        let clientId = req.body.client; //id client
         
+
         let postData = {
             name: req.body.name,
             image: req.body.image,
             cost: req.body.cost,
             isDeveloped: false,
-            dateToFinish: dateFormat(new Date(req.body.dateToFinish)),
-            owner: [userId]
+            dateToFinish: new Date(req.body.dataToFinish),
+            owner: [userId],
+            milestones: [] as any
         }
 
         findOne(ProjectModel, {name: postData.name}, (err, project) => {
@@ -86,7 +88,7 @@ export class ProjectController {
             }
             postData.owner.push(teamLeadId, clientId)
 
-            new ProjectModel(postData).save( (err) => {
+            new ProjectModel(postData).save( (err, project) => {
                 if(err){
                     return handleError( {message: err.message, status: 500}, res)
                 }
@@ -94,18 +96,18 @@ export class ProjectController {
                 res.json({
                     status: 200,
                     message: 'Sucssesfully!',
-                    project
+                    id: project._id
                 })
             })
         })
     }
 
     edit(req: express.Request, res: express.Response){
-        let id = req.body.id;
-        let milestioneId = req.body.milestioneId;
+        let idProject = req.body.idProject;
+        let idMilestone = req.body.idMilestone;
         let developerId = req.body.developerId;
 
-        findByIdAndUpdate(ProjectModel, id, {"$push": {"milestones" : milestioneId , "owner" : developerId}}, (err, project) => {
+        findByIdAndUpdate(ProjectModel, idProject, {"$push": {"milestones" : idMilestone }}, (err, project) => {
             if(err){
                 return handleError( {message: err.message, status: 500}, res)
             }

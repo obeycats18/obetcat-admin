@@ -43,19 +43,22 @@ export class MilestonesController {
     //     } )
     // }
 
+
+    // If project is existing
     add(req: express.Request, res: express.Response, next:express.NextFunction) {
 
         let postData = {
             idProject: req.body.idProject,
             milestones: [] as Array<Object>
         };
+        
         let milestoneData = {
-            name: req.body.name,
-            isDeveloped: true,
+            milestoneName: req.body.milestoneName,
+            milestoneIsDeveloped: true,
             isNoReturn: req.body.isNoReturn,
-            dateToFinish: dateFormat(new Date(req.body.dateToFinish)),
+            milestoneDate: new Date(req.body.milestoneDate),
             procentComplete: 50,
-            developer: req.body.developer
+            // developer: req.body.developer
         };
 
         
@@ -75,12 +78,12 @@ export class MilestonesController {
                     return res.json({
                         status: 200,
                         message: 'Sucssesfully!',
-                        set
+                        id: set._id
                     })
                 })
             }else{
 
-                let isExisted = checkIsExisted(set.milestones, milestoneData.name)
+                let isExisted = checkIsExisted(set.milestones, milestoneData.milestoneName)
 
                 if(isExisted){
                     return res.json({
