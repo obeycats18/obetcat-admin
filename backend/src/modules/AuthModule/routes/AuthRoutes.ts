@@ -9,4 +9,4 @@ router.post('/registration', Auth.createUser)
 router.post('/login', Auth.login)
 
 
-export default router
+export default router;
