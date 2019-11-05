@@ -23,6 +23,6 @@ app.use(checkAuth);
 //Routers
 index(app);
 
-app.listen(process.env.EXPRESS_PORT, () => {
+app.listen(3003, () => {
     console.log('Server starting...');
 });

@@ -33,10 +33,10 @@ export let MilestoneShema = new Schema({
         procentComplete: {
             type: Number
         },
-        developer: {
+        developers: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
-        },
+        }],
         tasks: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Tasks'

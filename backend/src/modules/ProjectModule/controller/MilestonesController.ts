@@ -11,7 +11,7 @@ export class MilestonesController {
 
         let id = req.body.idProject;
         find(MilestoneModel, {idProject: id})
-            .populate('tasks')
+            .populate(['tasks', 'developers'])
             .exec()
             .then(milestones => {
                 return res.json({
@@ -58,6 +58,7 @@ export class MilestonesController {
             isNoReturn: req.body.isNoReturn,
             milestoneDate: new Date(req.body.milestoneDate),
             procentComplete: 50,
+            developers: [] as Array<String>
             // developer: req.body.developer
         };
 
@@ -67,6 +68,10 @@ export class MilestonesController {
             if(err) {
                 return handleError( {message: err.message, status: 500}, res)
             }        
+
+            milestoneData.developers = req.body.developers.map( (item:string) => {
+                return item;
+            })
 
             if(!set) {
                 postData.milestones.push(milestoneData);
