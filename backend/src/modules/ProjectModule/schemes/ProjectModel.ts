@@ -44,10 +44,14 @@ export let ProjectSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
-    milestones: [{
+    milestones: {
         type: Schema.Types.ObjectId,
         ref: 'Milestones' 
-    }]
+    },
+    optimization: {
+        type: Schema.Types.ObjectId,
+        ref: 'Optimization'
+    }
 })
 
 

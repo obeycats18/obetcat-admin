@@ -69,9 +69,9 @@ export class MilestonesController {
                 return handleError( {message: err.message, status: 500}, res)
             }        
 
-            milestoneData.developers = req.body.developers.map( (item:string) => {
-                return item;
-            })
+            // milestoneData.developers = req.body.developers.map( (item:string) => {
+            //     return item;
+            // })
 
             if(!set) {
                 postData.milestones.push(milestoneData);

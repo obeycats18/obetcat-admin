@@ -22,14 +22,25 @@ export let TaskSchema = new Schema({
         tasks: [{
             text: {
                 type: String,
-                required: [true, 'Text for task is required!']
+                required: [true, 'Text for task is required!'],
+                max: 100
             },
-            isDeveloped: {
-                type: Boolean,
-                default: false
-            },
-            dateToFinish: {
+            status: {
                 type: String
+            },
+            description: {
+                type: String,
+                max: 200
+            },
+            developer: {
+                type: Schema.Types.ObjectId,
+                ref: 'Users'
+            },
+            cost: {
+                type: Number
+            },
+            priority: {
+                type: Number
             }
         }]
     }]

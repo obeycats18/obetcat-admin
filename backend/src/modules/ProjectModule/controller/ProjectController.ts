@@ -40,10 +40,10 @@ export class ProjectController {
 
 
     index (req: express.Request, res: express.Response) {
-        let id = req.body.id; //specified id project
-
+        let id = req.query.id; //specified id project
+        console.log(id)
         findById(ProjectModel, id)
-            .populate(['owner', 'milestones'])
+            .populate(['owner', 'milestones', 'developers'])
             .exec( (err, project) => {
                 if(err ){
                     return handleError( {message: err.message, status: 500}, res)
@@ -76,7 +76,8 @@ export class ProjectController {
             isDeveloped: false,
             dateToFinish: new Date(req.body.dataToFinish),
             owner: [userId],
-            milestones: [] as any
+            // milestones: ,
+            procentComplete: 50
         }
 
         findOne(ProjectModel, {name: postData.name}, (err, project) => {
@@ -117,6 +118,28 @@ export class ProjectController {
                 project
             })
         } )
+    }
+
+    delete(req: express.Request, res: express.Response){
+        let id = req.query.id;
+        
+        ProjectModel.findByIdAndRemove(id, (err, project) => {
+            if(err){
+                return handleError( {message: err.message, status: 500}, res)
+            }
+
+            if(!project){
+                return res.json({
+                    status: 404,
+                    message: 'Project not found',
+                }) 
+            }
+
+            return res.json({
+                status: 200,
+                message: 'Success',
+            })
+        })
     }
 }
 

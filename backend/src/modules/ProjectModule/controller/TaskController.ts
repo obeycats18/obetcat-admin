@@ -4,6 +4,8 @@ import {update, findOne, findById, find} from "../../../db/queries/queries";
 import { handleError } from '../../../middlewares/errorHandling/errorHandling';
 import mongoose from 'mongoose'
 
+import {reduce} from 'lodash'
+
 export class TaskController {
 
     index(req: express.Request, res: express.Response) {
@@ -40,32 +42,29 @@ export class TaskController {
             tasks: [] as Array<Object>
         };
 
-        let taskData = {
-            text: req.body.text
-        };
-
         findOne(TaskModel, {idProject: postData.idProject}, (err, set) => {
             if(!set) {
-                tasksReq.tasks.push(taskData);
+                console.log(req.body.tasks)
+                tasksReq.tasks = req.body.tasks.map((item:string) => item);
                 postData.set.push(tasksReq);
-                new TaskModel(postData).save( (err, taskSet) => {
+                new TaskModel(postData).save( (err) => {
                     if(err){
                         return handleError( {message: err.message, status: 500}, res)
                     }
 
                     return res.json({
                         status: 200,
-                        taskSet
+                        tasks: set.task
                     })
 
                 })
             }
             else{
-
+                
                 findOne(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, (err, milestoneSet) => {
                     if(!milestoneSet) {
                         
-                        tasksReq.tasks.push(taskData);
+                        tasksReq.tasks = req.body.tasks.map((item:string) => item);
                         
                         update(TaskModel, {idProject: postData.idProject}, {"$push": {set: tasksReq}}, (err, set) => {
                             if(err){
@@ -80,8 +79,8 @@ export class TaskController {
 
                         
                     }else{
-
-                        update(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, {"$push": {'set.$.tasks': taskData}}, (err, set) => {
+                        tasksReq.tasks = req.body.tasks.map((item:string) => item);
+                        update(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, {"$push": {'set.$.tasks': tasksReq.tasks}}, (err, set) => {
                             if(err){
                                 return handleError( {message: err.message, status: 500}, res)
                             }else{
@@ -91,7 +90,15 @@ export class TaskController {
                                 })
                             }
                         })
-
+                        // findOne(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, (err, milestoneSet) => {
+                        //     milestoneSet.set.tasks = req.body.tasks.map((item:string) => item);
+                        //     milestoneSet.save();
+                        //     return res.json({
+                        //         status: 200,
+                        //         milestoneSet
+                        //     })
+                        // } )
+                        
                     }
                 })
 
@@ -100,27 +107,38 @@ export class TaskController {
     }
 
 
-    edit (req: express.Request, res: express.Response) {
+    async edit (req: express.Request, res: express.Response) {
         
         let idMilestone = req.body.idMilestone;
-        let isDeveloped = req.body.isDeveloped;
-        let idTask = req.body.idTask;
+        let task = req.body.task;
+
+        let doc = await TaskModel.findOne({'set.tasks._id': new mongoose.Types.ObjectId(task._id)}).then((doc:any) => doc) 
         
-        TaskModel.update(
-            {"set.idMilestone": idMilestone},
-            {$set: {"set.$.tasks.$[i].isDeveloped": isDeveloped} } ,
-
-            {"arrayFilters": [{'i._id': new mongoose.Types.ObjectId(idTask)}] },
-            (err, doc) => {
-
-                if(err){
-                    return handleError( {message: err.message, status: 500}, res)
+        doc._doc.set.forEach((item:any) => {
+            item.tasks.forEach((element:any) => {
+                if(`${element._id}` === task._id) {
+                   reduce(task, (result:any, value:any, key:any) => {
+                        console.log(value, key)
+                        if(key !== '_id'){
+                            element[key] = task[key] 
+                        }
+                        return result
+                    }, {})
                 }
+            })
+        })
+
+        try{
+            doc.save( (doc:any) => {
                 return res.json({
                     message: 200,
                     doc
                 })
-            }
-        )
+            })
+        }catch(err) {
+            handleError( {message: err.message, status: 500}, res)
+        }
+        
+
     }
 }
