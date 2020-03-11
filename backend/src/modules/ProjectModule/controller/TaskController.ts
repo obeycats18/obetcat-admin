@@ -8,9 +8,10 @@ import {reduce} from 'lodash'
 
 export class TaskController {
 
-    index(req: express.Request, res: express.Response) {
-        let id = req.body.id; // set ID
-        findById(TaskModel, id)
+
+    default(req: express.Request, res: express.Response) {
+        
+        find(TaskModel, {})
             .populate('tasks')
             .exec()
             .then(( taskSet) => {
@@ -20,10 +21,11 @@ export class TaskController {
                         message: 'Set tasks not found'
                     })
                 }
-
+                taskSet.map((item:any) => console.log(item.set))
+                console.log()
                 return res.json({
                     status: 200,
-                    taskSet
+                    set:  taskSet.map((item:any) => item.set)
                 })
             })
             .catch (err => {
@@ -31,22 +33,45 @@ export class TaskController {
             })
     }
 
+    async index(req: express.Request, res: express.Response) {
+        try{
+            let idProject = req.query.id; // set ID
+            let doc:any = await TaskModel.findOne({idProject})
+
+            if(!doc){
+                return res.json({
+                    status: 404,
+                    message: 'Tasks not found'
+                })
+            }
+
+            return res.json({
+                status: 200,
+                idTask: doc._id,
+                tasks: doc.tasks
+            }) 
+        }
+        catch (err) {
+            return handleError( {message: err.message, status: 500}, res)
+        }
+    }
+
     add(req: express.Request, res: express.Response) {
         let postData = {
             idProject: req.body.idProject,
-            set: [] as Array<Object>
-        };
-
-        let tasksReq = {
-            idMilestone: req.body.idMilestone,
             tasks: [] as Array<Object>
         };
 
+        // let tasksReq = {
+        //     idMilestone: req.body.idMilestone,
+        // };
+
+        // TODO: Overwritting
+
         findOne(TaskModel, {idProject: postData.idProject}, (err, set) => {
             if(!set) {
-                console.log(req.body.tasks)
-                tasksReq.tasks = req.body.tasks.map((item:string) => item);
-                postData.set.push(tasksReq);
+                postData.tasks = req.body.tasks.map((item:string) => item);
+                
                 new TaskModel(postData).save( (err) => {
                     if(err){
                         return handleError( {message: err.message, status: 500}, res)
@@ -54,54 +79,25 @@ export class TaskController {
 
                     return res.json({
                         status: 200,
-                        tasks: set.task
+                        message: "Success"
                     })
 
                 })
             }
             else{
-                
-                findOne(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, (err, milestoneSet) => {
-                    if(!milestoneSet) {
-                        
-                        tasksReq.tasks = req.body.tasks.map((item:string) => item);
-                        
-                        update(TaskModel, {idProject: postData.idProject}, {"$push": {set: tasksReq}}, (err, set) => {
-                            if(err){
-                                return handleError( {message: err.message, status: 500}, res)
-                            }else{
-                                return res.json({
-                                    status: 200,
-                                    set
-                                })
-                            }
-                        })
 
+                postData.tasks = req.body.tasks.map((item:string) => item);
                         
+                update(TaskModel, {idProject: postData.idProject}, {"$push": {tasks: postData.tasks}}, (err, set) => {
+                    if(err){
+                        return handleError( {message: err.message, status: 500}, res)
                     }else{
-                        tasksReq.tasks = req.body.tasks.map((item:string) => item);
-                        update(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, {"$push": {'set.$.tasks': tasksReq.tasks}}, (err, set) => {
-                            if(err){
-                                return handleError( {message: err.message, status: 500}, res)
-                            }else{
-                                return res.json({
-                                    status: 200,
-                                    set
-                                })
-                            }
+                        return res.json({
+                            status: 200,
+                            message: 'Success'
                         })
-                        // findOne(TaskModel, {"set.idMilestone": tasksReq.idMilestone}, (err, milestoneSet) => {
-                        //     milestoneSet.set.tasks = req.body.tasks.map((item:string) => item);
-                        //     milestoneSet.save();
-                        //     return res.json({
-                        //         status: 200,
-                        //         milestoneSet
-                        //     })
-                        // } )
-                        
                     }
                 })
-
             }
         })
     }

@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 import { findOne } from "../../../db/queries/queries";
 import { handleError } from "../../../middlewares/errorHandling/errorHandling";
 
+import {getRole} from '../../../helper/Roles'
 
 export class AuthController {
 
@@ -26,6 +27,8 @@ export class AuthController {
                 })
             }
 
+            newUser.role = getRole(newUser.role)
+            
             new UserModel(newUser).save( ( err ) => {
                 if(err){
                     return handleError( {message: err.message, status: 500}, res)

@@ -1,18 +1,22 @@
 import express from 'express'
-import { MilestoneModel } from '../models/models';
+import { MilestoneModel, TaskModel } from '../models/models';
+
 import {checkIsExisted} from  '../../../helper/checkIsExisted'
 import {dateFormat} from "../../../helper/dateFormat";
 import {update, findOne, find, findByIdAndUpdate} from "../../../db/queries/queries";
 import { handleError } from '../../../middlewares/errorHandling/errorHandling';
 
+import {reduce} from 'lodash'
+
+import mongoose from 'mongoose'
+
 export class MilestonesController {
 
     default(req: express.Request, res: express.Response){
 
-        let id = req.body.idProject;
-        find(MilestoneModel, {idProject: id})
+        const id = req.query.id;
+        findOne(MilestoneModel, {idProject: id})
             .populate(['tasks', 'developers'])
-            .exec()
             .then(milestones => {
                 return res.json({
                     status: 200,
@@ -22,26 +26,62 @@ export class MilestonesController {
             .catch(err => {
                 return handleError( {message: err.message, status: 500}, res)
             })
+
     }  
 
-    // edit(req: express.Request, res: express.Response) {
-    //     let id = req.body.id
-    //     let tasksId = req.body.tasksId;
+    
 
-    //     findByIdAndUpdate(MilestoneModel, id, {"$push": {"tasks" : tasksId}}, (err, set) => {
-    //         if(err){
-    //             return res.json({
-    //                 status: 500,
-    //                 err 
-    //             })
-    //         }
-    //         return res.json({
-    //             status: 200,
-    //             message: 'Sucssesfully!',
-    //             set
-    //         })
-    //     } )
-    // }
+    async edit(req: express.Request, res: express.Response) {
+
+        try{
+
+            let idProject = req.body.idProject
+            let idSource = req.body.idSource
+            let idDestination = req.body.idDestination
+            let reqTasks = req.body.tasks
+    
+            let milestones:any = await MilestoneModel.findOne({idProject})
+            let tasks:any = await TaskModel.findOne({idProject})
+
+            if(tasks){
+                if(`${tasks._id}` === `${idSource}`){
+                    tasks.tasks = tasks.tasks.filter((task:any) => `${task._id}` !== `${reqTasks._id}`) 
+                }else if(`${tasks._id}` === `${idDestination}`){
+                    tasks.tasks.push(reqTasks)
+                }
+                tasks.save()
+            }
+
+            if(milestones) {
+                milestones.milestones.forEach((milestone:any) => {
+                    if(`${milestone._id}` === `${idSource}`){
+                        milestone.tasks = milestone.tasks.filter((task:any) => `${task._id}` !== `${reqTasks._id}`) 
+                    }else if(`${milestone._id}` === `${idDestination}`) {
+                        milestone.tasks.push(reqTasks)
+                    }
+                })
+                milestones.save()
+                
+                return res.json({
+                    status: 200,
+                    message: 'Sucssesfully!',
+                    milestones,
+                    tasks
+                })
+            
+            }else{ 
+                return res.json({
+                    status: 404,
+                    message: 'Milestones not found!',
+                })
+            }
+            
+        }    
+        catch (err) {
+            return handleError( {message: err.message, status: 500}, res)
+        }
+        
+    }
 
 
     // If project is existing
@@ -53,12 +93,12 @@ export class MilestonesController {
         };
         
         let milestoneData = {
-            milestoneName: req.body.milestoneName,
-            milestoneIsDeveloped: true,
+            name: req.body.name,
+            isDevelop: true,
             isNoReturn: req.body.isNoReturn,
-            milestoneDate: new Date(req.body.milestoneDate),
+            date: new Date(req.body.milestoneDate),
             procentComplete: 50,
-            developers: [] as Array<String>
+            // developers: [] as Array<String>
             // developer: req.body.developer
         };
 
@@ -83,12 +123,12 @@ export class MilestonesController {
                     return res.json({
                         status: 200,
                         message: 'Sucssesfully!',
-                        id: set._id
+                        milestones: set
                     })
                 })
             }else{
 
-                let isExisted = checkIsExisted(set.milestones, milestoneData.milestoneName)
+                let isExisted = checkIsExisted(set.milestones, milestoneData.name)
 
                 if(isExisted){
                     return res.json({
@@ -103,7 +143,7 @@ export class MilestonesController {
                     }else{
                         return res.json({
                             status: 200,
-                            set
+                            milestones: set
                         })
                     }
                 })

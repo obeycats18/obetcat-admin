@@ -18,18 +18,6 @@ export class ProjectController {
                 if(err){
                     return handleError( {message: err.message, status: 500}, res)
                 }
-                
-                // const resProject = reduce(project, (result: any, value: any, key: any) => {
-                    
-                //     if(value.owner._id === user) {
-                //         result[key] = value;
-                //     }
-
-                //     console.log(value.owner._id);
-                //     console.log(result)
-                    
-                //     return result
-                // } , {})
 
                 res.json( {
                     status: 200,
@@ -37,7 +25,6 @@ export class ProjectController {
                 } )
             })
     }
-
 
     index (req: express.Request, res: express.Response) {
         let id = req.query.id; //specified id project

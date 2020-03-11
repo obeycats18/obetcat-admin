@@ -32,10 +32,7 @@ let UserSchema = new Schema({
         required: [true, 'Password is required!'],
         min: 8
     },
-    role: {
-        type: String,
-        required: [true, 'Role is required!']
-    },
+    role: {},
     photo: {
         type: String
     }

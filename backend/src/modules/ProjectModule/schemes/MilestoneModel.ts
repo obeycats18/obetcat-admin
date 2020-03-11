@@ -16,18 +16,17 @@ export let MilestoneShema = new Schema({
         ref: 'Projects'
     },
     milestones: [{
-        milestoneName: {
+        name: {
             type: String,
             required: [true, 'Milestone name is required!']
         },
-        milestoneIsDeveloped: {
+        isDevelop: {
             type: Boolean
         },
         isNoReturn: {
-            type: Boolean,
-            required: [true, 'isNoReturn is required!']
+            type: Boolean
         },
-        milestoneDate: {
+        date: {
             type: String
         },
         procentComplete: {
@@ -37,10 +36,7 @@ export let MilestoneShema = new Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }],
-        tasks: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Tasks'
-        }],
+        tasks: [{}],
     }],
 
     // edits: [EditsModel],

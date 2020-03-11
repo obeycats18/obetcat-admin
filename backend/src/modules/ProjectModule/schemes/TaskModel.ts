@@ -14,35 +14,29 @@ export let TaskSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Projects'
     },
-    set: [{
-        idMilestone: {
-            type: Schema.Types.ObjectId,
-            ref: 'Milestones'
+    tasks: [{
+        text: {
+            type: String,
+            required: [true, 'Text for task is required!'],
+            max: 100
         },
-        tasks: [{
-            text: {
-                type: String,
-                required: [true, 'Text for task is required!'],
-                max: 100
-            },
-            status: {
-                type: String
-            },
-            description: {
-                type: String,
-                max: 200
-            },
-            developer: {
-                type: Schema.Types.ObjectId,
-                ref: 'Users'
-            },
-            cost: {
-                type: Number
-            },
-            priority: {
-                type: Number
-            }
-        }]
+        status: {
+            type: String
+        },
+        description: {
+            type: String,
+            max: 200
+        },
+        developer: {
+            type: Schema.Types.ObjectId,
+            ref: 'Users'
+        },
+        cost: {
+            type: Number
+        },
+        priority: {
+            type: Number
+        }
     }]
 });
 

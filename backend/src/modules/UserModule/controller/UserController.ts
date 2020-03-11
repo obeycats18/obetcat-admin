@@ -53,6 +53,7 @@ export class UserController {
 
     getMe = (req:express.Request, res:express.Response) => {
         let userId = req.user._id
+        
         findById(UserModel, userId )
             .exec()
             .then(user => {
