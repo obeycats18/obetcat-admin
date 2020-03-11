@@ -30,7 +30,7 @@
     "flat": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
-    "mongoose": "^5.6.12",
+    "mongoose": "^5.7.5",
     "mongoose-date-format": "^1.2.0",
     "mongoose-dateonly": "^1.0.6",
     "nodemon": "^1.19.2",
