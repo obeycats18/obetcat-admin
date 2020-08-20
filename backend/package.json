@@ -21,7 +21,7 @@
     "@types/passport": "^1.0.1",
     "@types/passport-local": "^1.0.33",
     "@types/validator": "^10.11.3",
-    "bcrypt": "^3.0.8",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
